@@ -11,6 +11,7 @@ type Props = {isAuthorized: false} | { isAuthorized: true;
         uri: string;
         id : number;
         title: string;
+        thumbnail: string;
     }[]
 }
 
@@ -72,6 +73,10 @@ export default function ShowPartyPage(props: Props) {
                     songs.map(song => (
                         <div key={`song-${song.id}`}>
                             <h2>{song.title}</h2>
+                            <img
+                                src={song.thumbnail}
+                                alt={'Thumbnail of video: '+song.title}
+                            />
                         </div>
                     ))
                 }

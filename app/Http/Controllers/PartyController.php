@@ -61,7 +61,16 @@ class PartyController extends Controller
             ]);
         }
 
-        $songs = Song::where('party_id', $party->id)->orderBy('queue_order')->get();
+        $songs = Song::where('party_id', $party->id)->orderBy('queue_order')
+            ->get()
+            ->map(function ($song) {
+                $data = \Youtube::getVideoInfo(\Youtube::parseVidFromURL($song->uri));
+                $mediumUrl = $data->snippet->thumbnails->medium->url;
+                return [
+                    'thumbnail' => $mediumUrl,
+                    ...$song->getAttributes(),
+                ];
+            });
 
         return Inertia::render('party/show', [
             'party' => [

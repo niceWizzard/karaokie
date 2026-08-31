@@ -19,4 +19,5 @@ Route::prefix('join')->name('join.')->controller(PartyGuestController::class)->g
 
 Route::prefix('song')->name('song.')->controller(SongController::class)->group(function () {
     Route::post('/{slug}', 'store')->name('store');
+    Route::get('/', 'search')->name('search');
 });

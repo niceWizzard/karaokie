@@ -14,7 +14,7 @@ class SongController extends Controller
     {
         $party = Party::where('slug', $slug)->firstOrFail();
         $guestToken = $request->cookie('guest-token-'.$slug);
-        if(!$guestToken) {
+        if (! $guestToken) {
             return Redirect::route('join.index');
         }
 
@@ -38,9 +38,37 @@ class SongController extends Controller
                 'duration' => $vidData->contentDetails->duration,
                 'thumbnail' => $vidData->snippet->thumbnails->default->url,
             ]);
+
             return Redirect::back();
         } catch (\Exception $e) {
             return Redirect::back()->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255', 'min:2'],
+        ]);
+
+        $searchResult = \Youtube::searchVideos(
+            $request->input('title') . ' karaoke', 10, null, ['id', 'snippet']
+        );
+        $output = [];
+        if ($searchResult) {
+            foreach ($searchResult as $item) {
+                $videoId = $item->id->videoId;
+                $title = $item->snippet->title;
+                $output[] = [
+                    'title' => $title,
+                    'id' => $videoId,
+                    'thumbnail' => $item->snippet->thumbnails->default->url,
+                    'url' => 'https://www.youtube.com/watch?v='.$videoId,
+                ];
+            }
+        }
+
+        return response()->json($output);
+
     }
 }

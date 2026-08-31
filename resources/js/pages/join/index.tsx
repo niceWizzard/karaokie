@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import join from "@/routes/join";
 import song from "@/routes/song";
 import {formatIsoDuration} from "@/lib/utils";
+import {SongSearcherForm} from "@/components/SongSearcherForm";
 
 type Props = {
     fresh: true
@@ -18,6 +19,7 @@ type Props = {
 export default function JoinIndexPage() {
     const {props} = usePage<Props & {slug: string}>();
     const errors = props.errors;
+
     if(props.fresh) {
         return <div className="w-full h-full flex flex-col justify-center items-center flex-1">
             <h2 className="text-2xl font-medium tracking-tight">Join the Party</h2>
@@ -69,23 +71,10 @@ export default function JoinIndexPage() {
                     ))
                 }
             </div>
-            <Form className="flex flex-col gap-2 border p-4 rounded-lg"
-                action={song.store(props.party.slug)}
-              resetOnSuccess
-            >
-                <h3 className="font-bold tracking-tight">Add Song</h3>
-                <Field>
-                    <FieldLabel htmlFor="uri">Link</FieldLabel>
-                    <Input type="text" placeholder="Enter youtube link" name="uri" />
-                    {
-                        errors.uri &&
-                        <FieldError>
-                            {errors.uri}
-                        </FieldError>
-                    }
-                </Field>
-                <Button>Add</Button>
-            </Form>
+            <SongSearcherForm
+                partySlug={props.party.slug}
+            />
+
         </div>
     )
 }

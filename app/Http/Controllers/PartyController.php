@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Party;
+use App\Models\Song;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -60,6 +61,8 @@ class PartyController extends Controller
             ]);
         }
 
+        $songs = Song::where('party_id', $party->id)->orderBy('queue_order')->get();
+
         return Inertia::render('party/show', [
             'party' => [
                 'id' => $party->id,
@@ -67,6 +70,7 @@ class PartyController extends Controller
                 'slug' => $party->slug,
                 'requiresPin' => false,
             ],
+            'songs' => $songs,
             'isAuthorized' => true,
         ]);
     }

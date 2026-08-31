@@ -4,7 +4,12 @@ type Props = {isAuthorized: false} | { isAuthorized: true;
     party: {
         name: string;
         slug: string;
-    }
+    },
+    songs: {
+        uri: string;
+        id : number;
+        title: string;
+    }[]
 }
 
 export default function ShowPartyPage(props: Props) {
@@ -17,7 +22,7 @@ export default function ShowPartyPage(props: Props) {
         </div>
     }
 
-    const {party} = props;
+    const {party, songs} = props;
 
     return (
         <div className="container mx-auto max-sm:px-3 py-4 pt-6 flex flex-col gap-4">
@@ -35,6 +40,15 @@ export default function ShowPartyPage(props: Props) {
             </div>
             <hr/>
             <h3 className="text-lg">Queue</h3>
+            <div className="flex flex-col gap-2">
+                {
+                    songs.map(song => (
+                        <div key={`song-${song.id}`}>
+                            <h2>{song.title}</h2>
+                        </div>
+                    ))
+                }
+            </div>
         </div>
     )
 }

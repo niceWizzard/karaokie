@@ -26,11 +26,14 @@ class PartyGuestController extends Controller
         }
 
         $guest = Guest::where('session_token', $sessionToken)->firstOrFail();
+        $guestSongs = Song::where('party_id', $party->id)->where('guest_id', $guest->id)
+            ->get();
 
         return Inertia::render('join/index', [
             'fresh' => false,
             'slug' => $party->slug,
             'guest' => $guest->only('name', 'session_token', 'joined_at'),
+            'guestSongs' => $guestSongs,
             'party' => $party->only('name', 'slug'),
         ]);
     }

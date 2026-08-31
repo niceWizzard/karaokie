@@ -3,6 +3,7 @@ import {Field, FieldDescription, FieldError, FieldLabel} from "@/components/ui/f
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import join from "@/routes/join";
+import song from "@/routes/song";
 
 type Props = {
     fresh: true
@@ -16,6 +17,11 @@ type Props = {
         name: string;
         joined_at: string;
     }
+    guestSongs: {
+       title: string;
+       id: number;
+       uri: string;
+    }[]
 }
 
 export default function JoinIndexPage() {
@@ -47,9 +53,37 @@ export default function JoinIndexPage() {
     }
 
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto flex flex-col gap-4">
             <h2>{props.party.name}</h2>
             <p>Hello {props.guest.name}!</p>
+            <div className="flex flex-col gap-2">
+                {
+                    props.guestSongs.map(song => (
+                        <div className="flex flex-col"
+                            key={`guest-song-${song.id}`}
+                        >
+                            <h3>{song.title}</h3>
+                        </div>
+                    ))
+                }
+            </div>
+            <Form className="flex flex-col gap-2 border p-4 rounded-lg"
+                action={song.store(props.party.slug)}
+              resetOnSuccess
+            >
+                <h3 className="font-bold tracking-tight">Add Song</h3>
+                <Field>
+                    <FieldLabel htmlFor="uri">Link</FieldLabel>
+                    <Input type="text" placeholder="Enter youtube link" name="uri" />
+                    {
+                        errors.uri &&
+                        <FieldError>
+                            {errors.uri}
+                        </FieldError>
+                    }
+                </Field>
+                <Button>Add</Button>
+            </Form>
         </div>
     )
 }

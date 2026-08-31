@@ -4,24 +4,15 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import join from "@/routes/join";
 import song from "@/routes/song";
+import {formatIsoDuration} from "@/lib/utils";
 
 type Props = {
     fresh: true
 } | {
     fresh: false,
-    party: {
-        name: string;
-        slug: string;
-    }
-    guest: {
-        name: string;
-        joined_at: string;
-    }
-    guestSongs: {
-       title: string;
-       id: number;
-       uri: string;
-    }[]
+    party: Party
+    guest: Guest
+    guestSongs: Song[]
 }
 
 export default function JoinIndexPage() {
@@ -59,10 +50,21 @@ export default function JoinIndexPage() {
             <div className="flex flex-col gap-2">
                 {
                     props.guestSongs.map(song => (
-                        <div className="flex flex-col"
-                            key={`guest-song-${song.id}`}
+                        <div key={`guest-song-${song.id}`}
+                             className="flex gap-3 border p-2 w-full rounded-lg max-w-lg"
                         >
-                            <h3>{song.title}</h3>
+                            <img
+                                src={song.thumbnail}
+                                alt={'Thumbnail of video: '+song.title}
+                            />
+                            <div className="flex flex-col flex-1">
+                                <div className="flex justify-between gap-4">
+                                    <h2>{song.title} LSKDJSFLDKJFSLDK</h2>
+                                    <span>#{song.queue_order}</span>
+                                </div>
+
+                                <span>{formatIsoDuration(song.duration)}</span>
+                            </div>
                         </div>
                     ))
                 }

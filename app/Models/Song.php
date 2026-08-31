@@ -13,5 +13,7 @@ class Song extends Model
         'queue_order',
         'guest_id',
         'title',
+        'duration',
+        'thumbnail',
     ];
 }

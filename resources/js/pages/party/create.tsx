@@ -6,7 +6,6 @@ import {Button} from "@/components/ui/button";
 import party from "@/routes/party";
 
 export default function CreatePartyPage(a: {}) {
-    console.log(a);
     return <div className="container mx-auto">
 
         <Form className="max-sm:px-4 py-8 flex flex-col justify-center items-center"

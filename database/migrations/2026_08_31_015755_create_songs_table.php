@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('uri');
             $table->integer('queue_order')->default(0);
+            $table->string('thumbnail');
+            $table->string('duration');
         });
 
         Schema::table('parties', function (Blueprint $table) {

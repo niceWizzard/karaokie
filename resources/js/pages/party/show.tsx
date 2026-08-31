@@ -1,18 +1,11 @@
 import {Button} from "@/components/ui/button";
 import ReactPlayer from 'react-player'
 import {useEffect, useState} from "react";
+import {formatIsoDuration} from "@/lib/utils";
 
 type Props = {isAuthorized: false} | { isAuthorized: true;
-    party: {
-        name: string;
-        slug: string;
-    },
-    songs: {
-        uri: string;
-        id : number;
-        title: string;
-        thumbnail: string;
-    }[]
+    party: Party;
+    songs: Song[]
 }
 
 export default function ShowPartyPage(props: Props) {
@@ -35,7 +28,9 @@ export default function ShowPartyPage(props: Props) {
             <hr/>
             {
                 songs.length ? (
-                    <ReactPlayer src={songs[currentVideo].uri} className="aspect-video w-full mx-auto"
+                    <ReactPlayer src={songs[currentVideo].uri} className=" w-full aspect-video max-w-5xl mx-auto"
+                         width="100%"
+                         height="100%"
                     autoPlay
                      controls
 
@@ -68,15 +63,20 @@ export default function ShowPartyPage(props: Props) {
             </div>
             <hr/>
             <h3 className="text-lg">Queue</h3>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 items-center">
                 {
                     songs.map(song => (
-                        <div key={`song-${song.id}`}>
-                            <h2>{song.title}</h2>
+                        <div key={`song-${song.id}`}
+                            className="flex gap-3 border p-2 w-full rounded-lg max-w-lg"
+                        >
                             <img
                                 src={song.thumbnail}
                                 alt={'Thumbnail of video: '+song.title}
                             />
+                            <div className="flex flex-col flex-1">
+                                <h2>{song.title}</h2>
+                                <span>{formatIsoDuration(song.duration)}</span>
+                            </div>
                         </div>
                     ))
                 }

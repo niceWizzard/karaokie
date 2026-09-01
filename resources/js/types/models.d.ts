@@ -11,6 +11,7 @@ interface Song
 interface Party {
     name: string;
     slug: string;
+    current_song_id: number | null;
 }
 
 interface Guest {

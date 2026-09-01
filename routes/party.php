@@ -9,6 +9,7 @@ Route::prefix('party')->name('party.')->controller(PartyController::class)->grou
     Route::get('/create', 'create')->name('create');
     Route::post('/store', 'store')->name('store');
     Route::get('/{slug}', 'show')->name('show');
+    Route::post('/{slug}/update-song', 'setSongId')->name('set-song-id');
 });
 
 Route::prefix('join')->name('join.')->controller(PartyGuestController::class)->group(function () {
@@ -21,5 +22,4 @@ Route::prefix('song')->name('song.')->controller(SongController::class)->group(f
     Route::post('/{slug}', 'store')->name('store');
     Route::get('/', 'search')->name('search');
     Route::delete('/{song}', 'destroy')->name('destroy');
-
 });

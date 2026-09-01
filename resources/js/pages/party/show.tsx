@@ -1,11 +1,13 @@
 import {Button} from "@/components/ui/button";
 import ReactPlayer from 'react-player'
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {formatIsoDuration} from "@/lib/utils";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {EllipsisVertical, Trash2} from "lucide-react";
-import {router} from "@inertiajs/react";
+import {router, usePoll} from "@inertiajs/react";
 import {destroy} from "@/routes/song";
+import {setSongId} from "@/routes/party";
+
 
 type Props = {isAuthorized: false} | { isAuthorized: true;
     party: Party;
@@ -14,8 +16,20 @@ type Props = {isAuthorized: false} | { isAuthorized: true;
 
 export default function ShowPartyPage(props: Props) {
 
-    const [currentVideo, setCurrentVideo] = useState(0)
+    usePoll(2500, {
+        only: ['songs']
+    })
+    const [currentVideo, setCurrentVideo] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
 
+    useEffect(() => {
+        if(props.isAuthorized && props.party) {
+            const currentSong = props.songs.findIndex(v => props.party.current_song_id === v.id);
+            if(currentSong > -1) {
+                setCurrentVideo(currentSong);
+            }
+        }
+    }, [props])
 
     if(!props.isAuthorized) {
         return <div className="flex flex-col items-center justify-center flex-1 ">
@@ -26,27 +40,49 @@ export default function ShowPartyPage(props: Props) {
 
     const {party, songs} = props;
 
+    const currentSong = songs.at(currentVideo);
+
+    const onNext = () => {
+        if(currentVideo >= songs.length-1) {
+            return;
+        }
+        const nextSong = songs[currentVideo + 1];
+        setCurrentVideo(v => v + 1);
+        router.post(setSongId({
+            slug: party.slug
+        }), {
+            song_id: nextSong.id,
+        });
+    }
+
+    const onPrevious = () => {
+        if(currentVideo <= 0) {
+            return;
+        }
+        const prevSong = songs[currentVideo - 1];
+        setCurrentVideo(v => v - 1);
+        router.post(setSongId({
+            slug: party.slug
+        }), {
+            song_id: prevSong.id,
+        });
+    }
+
     return (
         <div className="container mx-auto max-sm:px-3 py-4 pt-6 flex flex-col gap-4">
             <h2 className="text-2xl font-bold tracking-tight">{party.name}</h2>
             <hr/>
             {
                 songs.length ? (
-                    <ReactPlayer src={songs[currentVideo].uri} className=" w-full aspect-video max-w-5xl mx-auto"
-                         width="100%"
-                         height="100%"
+                    <ReactPlayer src={songs[currentVideo].uri} className="w-full aspect-video max-w-5xl mx-auto"
+                     width="100%"
+                     height="100%"
                     autoPlay
+                     playing={!isPaused}
                      controls
-
-                     onEnded={() => {
-                         console.log("ended")
-                         if(currentVideo +1 < songs.length) {
-                             setCurrentVideo(v => v+1);
-                         }
-                     }}
+                     onEnded={onNext}
                      config={{
                          youtube: {
-                             fs: 1,
                              start: 0,
                          }
                      }}>
@@ -58,11 +94,11 @@ export default function ShowPartyPage(props: Props) {
                 )
             }
             <div className="flex flex-col w-full">
-                <h3 className="text-lg ">Song Title Here</h3>
+                <h3 className="text-lg ">{currentSong?.title ?? "Song"}</h3>
                 <div className="flex gap-2 w-full justify-center">
-                    <Button>Previous</Button>
-                    <Button>Pause</Button>
-                    <Button>Next</Button>
+                    <Button onClick={onPrevious}>Previous</Button>
+                    <Button onClick={() => setIsPaused(v => !v)}>{isPaused ? 'Play' : 'Pause'}</Button>
+                    <Button onClick={onNext}>Next</Button>
                 </div>
             </div>
             <hr/>
@@ -71,7 +107,9 @@ export default function ShowPartyPage(props: Props) {
                 {
                     songs.map(song => (
                         <div key={`guest-song-${song.id}`}
-                             className="flex gap-3 border p-4 w-full min-w-sm rounded-lg  bg-foreground/5 shadow"
+                             className={
+                                 `flex gap-3 border p-4 w-full min-w-sm rounded-lg bg-foreground/5 shadow ${song.id === party.current_song_id ? 'border-2 border-primary' : ''}`
+                             }
                         >
                             <img
                                 src={song.thumbnail}

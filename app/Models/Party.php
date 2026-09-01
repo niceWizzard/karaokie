@@ -16,6 +16,7 @@ class Party extends Model
         'slug',
         'secret_hash',
         'pin',
+        'current_song_id',
     ];
 
 

@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {RouteDefinition} from "@/wayfinder";
 import {SubmitEvent, useState} from "react";
 import {PlusIcon} from "lucide-react";
+import {formatIsoDuration} from "@/lib/utils";
 
 export function SongSearcherForm({partySlug}: { partySlug: string }) {
     const {props} = usePage();
@@ -13,12 +14,7 @@ export function SongSearcherForm({partySlug}: { partySlug: string }) {
 
     const { data, setData, get} = useForm<{title: string;}>();
 
-    const [songSearch, setSongSearch] = useState<{
-        id: string;
-        title: string;
-        thumbnail: string;
-        url: string;
-    }[]>([])
+    const [songSearch, setSongSearch] = useState<Song[]>([])
     const handleSubmit = async (e : SubmitEvent<HTMLFormElement> ) => {
         e.preventDefault()
         const queryParams = new URLSearchParams(data).toString();
@@ -62,18 +58,22 @@ export function SongSearcherForm({partySlug}: { partySlug: string }) {
                         <h3 className="font-semibold text-lg">Results</h3>
                         <hr className="my-2"/>
                         {songSearch.map(song => (
-                            <div className="flex flex-row gap-2"
+                            <div className="flex flex-row gap-2 items-center"
                                  key={`youtube-${song.id}`}
                             >
                                 <img src={song.thumbnail} alt={"Song " + song.title}/>
-                                <h2>{song.title}</h2>
+                                <div className="flex flex-col flex-1">
+                                    <h2>{song.title}</h2>
+                                    <span>{formatIsoDuration(song.duration)}</span>
+
+                                </div>
                                 <Form
                                     action={songRoute.store({
                                         slug: partySlug,
                                     })}
                                     onBefore={() => setSongSearch([])}
                                 >
-                                    <input type="hidden" name="uri" value={song.url}/>
+                                    <input type="hidden" name="uri" value={song.uri}/>
                                     <Button>
                                         <PlusIcon/>
                                     </Button>

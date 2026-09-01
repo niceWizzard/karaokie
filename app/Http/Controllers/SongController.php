@@ -54,25 +54,38 @@ class SongController extends Controller
             'title' => ['required', 'string', 'max:255', 'min:2'],
         ]);
 
+        // 1. Search for video IDs and snippets
         $searchResult = \Youtube::searchVideos(
-            $request->input('title').' karaoke', 10, null, ['id', 'snippet']
+            $request->input('title').' karaoke', 20, null, ['id', 'snippet']
         );
+
+        if (! $searchResult) {
+            return response()->json([]);
+        }
+
+        // 2. Extract video IDs
+        $videoIds = array_map(fn ($item) => $item->id->videoId, $searchResult);
+
+        // 3. Batch fetch video details (including 'status')
+        $videoDetails = \Youtube::getVideoInfo($videoIds);
+
         $output = [];
-        if ($searchResult) {
-            foreach ($searchResult as $item) {
-                $videoId = $item->id->videoId;
-                $title = $item->snippet->title;
-                $output[] = [
-                    'title' => $title,
-                    'id' => $videoId,
-                    'thumbnail' => $item->snippet->thumbnails->default->url,
-                    'url' => 'https://www.youtube.com/watch?v='.$videoId,
-                ];
+        foreach ($videoDetails as $item) {
+            // 4. Filter out non-embeddable or non-public videos
+            if (isset($item->status->embeddable) && ! $item->status->embeddable) {
+                continue;
             }
+
+            $output[] = [
+                'title' => $item->snippet->title,
+                'id' => $item->id,
+                'thumbnail' => $item->snippet->thumbnails->default->url,
+                'uri' => 'https://www.youtube.com/watch?v='.$item->id,
+                'duration' => $item->contentDetails->duration,
+            ];
         }
 
         return response()->json($output);
-
     }
 
     public function destroy(Request $request, Song $song)
@@ -93,13 +106,24 @@ class SongController extends Controller
 
         try {
             DB::transaction(function () use ($song) {
+                // Update party current song
+                $nextSong = Song::where('party_id', $song->party_id)
+                    ->where('queue_order', '>', $song->queue_order)
+                    ->orderBy('queue_order')->first();
+
+                if ($nextSong) {
+                    Party::where('slug', $song->party->slug)->update(['current_song_id' => $nextSong->id]);
+                }
+
                 $allSongs = Song::where('party_id', $song->party->id)->orderBy('queue_order')->get();
+
                 foreach ($allSongs as $curSong) {
                     if ($curSong->queue_order > $song->queue_order) {
                         $curSong->queue_order -= 1;
                         $curSong->save();
                     }
                 }
+
                 $song->delete();
             });
 
@@ -108,7 +132,8 @@ class SongController extends Controller
                 'message' => 'Song removed successfully.',
             ]])->back();
         } catch (\Throwable $e) {
-            \Log::error("Error while deleting song: " . $e->getMessage());
+            \Log::error('Error while deleting song: '.$e->getMessage());
+
             return Inertia::flash(['toast' => [
                 'type' => 'error',
                 'message' => 'Something went wrong.',

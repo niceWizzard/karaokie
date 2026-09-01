@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Party;
 use App\Models\Song;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -69,10 +70,27 @@ class PartyController extends Controller
                 'id' => $party->id,
                 'name' => $party->name,
                 'slug' => $party->slug,
+                'current_song_id' => $party->current_song_id,
                 'requiresPin' => false,
             ],
             'songs' => $songs,
             'isAuthorized' => true,
         ]);
     }
+
+    public function setSongId(Request $request, string $slug): RedirectResponse
+    {
+        $request->validate([
+            'song_id' => ['required', 'integer', 'min:1', 'exists:songs,id'],
+        ]);
+        $party = Party::where('slug', $slug)->firstOrFail();
+
+        $party->update([
+            'current_song_id' => $request->input('song_id'),
+        ]);
+
+        return Redirect::back();
+
+    }
+
 }

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Party;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @extends Factory<Party>
@@ -21,7 +22,7 @@ class PartyFactory extends Factory
             'name' => $this->faker->domainName(),
             'slug' => $this->faker->text(8),
             'pin' => str($this->faker->numberBetween(1000, 9999)),
-            'secret_hash' => $this->faker->sha256(),
+            'secret_hash' => Hash::make('secret'),
             'current_song_id' => null,
         ];
     }

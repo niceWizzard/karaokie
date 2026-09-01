@@ -23,5 +23,9 @@ class Song extends Model
         return $this->belongsTo(Guest::class);
     }
 
+    public function party(): BelongsTo {
+        return $this->belongsTo(Party::class);
+    }
+
 
 }

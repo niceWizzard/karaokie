@@ -38,7 +38,6 @@ class PartyController extends Controller
             'party-secret-'.$slug,
             $partySecret,
             24 * 60,
-            '/party'
         );
 
         return Redirect::route('party.show', ['slug' => $slug])->withCookie($cookie);
@@ -62,6 +61,7 @@ class PartyController extends Controller
         }
 
         $songs = Song::where('party_id', $party->id)->orderBy('queue_order')
+            ->with('guest')
             ->get();
 
         return Inertia::render('party/show', [

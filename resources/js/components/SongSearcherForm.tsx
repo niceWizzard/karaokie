@@ -33,7 +33,6 @@ export function SongSearcherForm({partySlug}: { partySlug: string }) {
 
         const resData = await res.json();
         setSongSearch(resData)
-        console.log(resData);
     }
 
     return (
@@ -57,13 +56,16 @@ export function SongSearcherForm({partySlug}: { partySlug: string }) {
                 <Button>Search</Button>
             </form>
             <div className="flex flex-col gap-2">
+
                 {
-                    songSearch &&
-                        songSearch.map( song => (
+                    songSearch.length ? (<>
+                        <h3 className="font-semibold text-lg">Results</h3>
+                        <hr className="my-2"/>
+                        {songSearch.map(song => (
                             <div className="flex flex-row gap-2"
-                                key={`youtube-${song.id}`}
+                                 key={`youtube-${song.id}`}
                             >
-                                <img src={song.thumbnail} alt={"Song " + song.title} />
+                                <img src={song.thumbnail} alt={"Song " + song.title}/>
                                 <h2>{song.title}</h2>
                                 <Form
                                     action={songRoute.store({
@@ -71,13 +73,15 @@ export function SongSearcherForm({partySlug}: { partySlug: string }) {
                                     })}
                                     onBefore={() => setSongSearch([])}
                                 >
-                                    <input type="hidden" name="uri" value={song.url} />
+                                    <input type="hidden" name="uri" value={song.url}/>
                                     <Button>
-                                        <PlusIcon />
+                                        <PlusIcon/>
                                     </Button>
                                 </Form>
                             </div>
-                        ))
+                        ))}
+                    </>) : null
+
                 }
             </div>
         </>

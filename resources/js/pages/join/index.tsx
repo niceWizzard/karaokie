@@ -13,7 +13,7 @@ type Props = {
     fresh: false,
     party: Party
     guest: Guest
-    guestSongs: Song[]
+    songs: (Song & {guest: Guest})[]
 }
 
 export default function JoinIndexPage() {
@@ -46,34 +46,53 @@ export default function JoinIndexPage() {
     }
 
     return (
-        <div className="container mx-auto flex flex-col gap-4">
-            <h2>{props.party.name}</h2>
-            <p>Hello {props.guest.name}!</p>
-            <div className="flex flex-col gap-2">
-                {
-                    props.guestSongs.map(song => (
-                        <div key={`guest-song-${song.id}`}
-                             className="flex gap-3 border p-2 w-full rounded-lg max-w-lg"
-                        >
-                            <img
-                                src={song.thumbnail}
-                                alt={'Thumbnail of video: '+song.title}
-                            />
-                            <div className="flex flex-col flex-1">
-                                <div className="flex justify-between gap-4">
-                                    <h2>{song.title} LSKDJSFLDKJFSLDK</h2>
-                                    <span>#{song.queue_order}</span>
-                                </div>
+        <div className="container mx-auto flex max-md:flex-col gap-8 max-sm:p-3 pb-lg px-4 py-8 ">
+            <div className="flex flex-col gap-4  w-full">
+                <h2>{props.party.name}</h2>
+                <p>Hello {props.guest.name}!</p>
 
-                                <span>{formatIsoDuration(song.duration)}</span>
-                            </div>
-                        </div>
-                    ))
-                }
+                <SongSearcherForm
+                    partySlug={props.party.slug}
+                />
             </div>
-            <SongSearcherForm
-                partySlug={props.party.slug}
-            />
+            <div className="flex flex-col gap-4">
+                <h3>Song Queue</h3>
+                <div className="flex flex-col gap-2">
+                    {
+                        props.songs.map(song => (
+                            <div key={`guest-song-${song.id}`}
+                                 className="flex gap-3 border p-4 w-full min-w-sm rounded-lg  bg-foreground/5 shadow"
+                            >
+                                <img
+                                    src={song.thumbnail}
+                                    alt={'Thumbnail of video: '+song.title}
+                                />
+                                <div className="flex flex-col flex-1">
+                                    <div className="flex justify-between gap-4">
+                                        <h2 className="font-medium text-sm md:text-base" title={song.title}>
+                                            {song.title.length > 32 ? `${song.title.slice(0, 32).trim()}...` : song.title}
+                                        </h2>
+                                        <span className="shrink-0 text-xs">#{song.queue_order}</span>
+                                    </div>
+
+                                    <span className="text-sm">{formatIsoDuration(song.duration)}</span>
+                                    <span className="text-xs md:text-sm font-light text-end flex-1 flex justify-end items-end">
+                                    Queued by {
+                                        props.guest.id === song.guest.id ? (<span className="font-semibold">You</span>):
+                                            song.guest.name
+                                    }
+                                </span>
+                                </div>
+                            </div>
+                        ))
+                    }
+                    {
+                        props.songs.length == 0 && (
+                            <p className="text-center ">There is no song in queue</p>
+                        )
+                    }
+                </div>
+            </div>
 
         </div>
     )

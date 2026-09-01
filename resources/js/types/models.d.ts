@@ -14,6 +14,7 @@ interface Party {
 }
 
 interface Guest {
+    id: number;
     name: string;
     joined_at: string;
 }

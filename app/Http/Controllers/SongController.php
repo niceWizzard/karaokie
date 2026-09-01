@@ -18,7 +18,7 @@ class SongController extends Controller
         $party = Party::where('slug', $slug)->firstOrFail();
         $guestToken = $request->cookie('guest-token-'.$slug);
         if (! $guestToken) {
-            return Redirect::route('join.index');
+            return Redirect::route('join.index', ['slug' => $slug]);
         }
 
         $guest = Guest::where('session_token', $guestToken)->firstOrFail();
@@ -42,7 +42,12 @@ class SongController extends Controller
                 'thumbnail' => $vidData->snippet->thumbnails->default->url,
             ]);
 
-            return Redirect::back();
+            return Inertia::flash([
+                'toast' => [
+                    'type' => 'success',
+                    'message' => 'Added song to queue.',
+                ],
+            ])->back();
         } catch (\Exception $e) {
             return Redirect::back()->withErrors(['error' => $e->getMessage()]);
         }

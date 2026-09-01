@@ -49,7 +49,6 @@ class PartyController extends Controller
         $party = Party::where('slug', $slug)->firstOrFail();
 
         $cookieSecret = $request->cookie('party-secret-'.$slug);
-        Log::debug(!!$cookieSecret);
 
         $isHost = $cookieSecret && Hash::check($cookieSecret, $party->secret_hash);
 

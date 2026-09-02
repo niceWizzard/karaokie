@@ -10,7 +10,8 @@ import {EllipsisVertical, Trash2} from "lucide-react";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
 type Props = {
-    fresh: true
+    fresh: true,
+    requiresPin: boolean;
 } | {
     fresh: false,
     party: Party
@@ -19,8 +20,11 @@ type Props = {
 }
 
 export default function JoinIndexPage() {
-    const {props} = usePage<Props & {slug: string}>();
+    const {props,url} = usePage<Props & {slug: string}>();
     const errors = props.errors;
+    const searchParams = new URLSearchParams(window.location.search);
+    const defaultPin = searchParams.get('pin') ?? '';
+
 
     if(props.fresh) {
         return <div className="w-full h-full flex flex-col justify-center items-center flex-1">
@@ -40,6 +44,20 @@ export default function JoinIndexPage() {
                         </FieldError>)
                     }
                 </Field>
+                {
+                    props.requiresPin && (
+                        <Field>
+                            <FieldLabel htmlFor="pin">Pin</FieldLabel>
+                            <Input type="text" name="pin" placeholder="Enter pin code here" defaultValue={defaultPin} />
+                            <FieldDescription>{!!defaultPin ? 'Pin code was auto-filled' : 'Ask for a pin code from host of the party'}</FieldDescription>
+                            {
+                                errors.pin && (<FieldError>
+                                    {errors.pin}
+                                </FieldError>)
+                            }
+                        </Field>
+                    )
+                }
                 <Button>
                     Enter
                 </Button>

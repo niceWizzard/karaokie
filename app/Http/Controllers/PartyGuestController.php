@@ -21,6 +21,7 @@ class PartyGuestController extends Controller
         if (! $sessionToken) {
             return Inertia::render('join/index', [
                 'fresh' => true,
+                'requiresPin' => !!$party->pin,
                 'slug' => $party->slug,
             ]);
         }
@@ -40,10 +41,22 @@ class PartyGuestController extends Controller
 
     public function store(Request $request, string $slug)
     {
+        $party = Party::where('slug', $slug)->firstOrFail();
+
         $request->validate([
             'name' => ['required', 'max:255'],
+            'pin' => [
+                function ($attribute, $value, $fail) use ($party) {
+                    if (! empty($party->pin)) {
+                        if (empty($value)) {
+                            $fail('A PIN is required for this party.');
+                        } elseif ($value !== $party->pin) {
+                            $fail('The PIN provided is incorrect.');
+                        }
+                    }
+                },
+            ],
         ]);
-        $party = Party::where('slug', $slug)->firstOrFail();
 
         $nameUsed = Guest::where('party_id', $party->id)
             ->where('name', $request->input('name'))

@@ -67,10 +67,9 @@ export default function JoinIndexPage() {
 
     return (
         <div className="container mx-auto flex max-md:flex-col gap-8 max-sm:p-3 pb-lg px-4 py-8 ">
-            <div className="flex flex-col gap-4  w-full">
+            <div className="flex flex-col gap-4  w-full max-w-2xl">
                 <h2>{props.party.name}</h2>
                 <p>Hello {props.guest.name}!</p>
-
                 <SongSearcherForm
                     partySlug={props.party.slug}
                 />

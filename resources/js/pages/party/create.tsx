@@ -7,15 +7,15 @@ import party from "@/routes/party";
 
 export default function CreatePartyPage() {
     const {props} = usePage();
-    return <div className="container mx-auto">
-        <Form className="max-sm:px-4 py-8 flex flex-col justify-center items-center"
+    return <div className="flex justify-center items-center flex-1">
+        <Form className="max-sm:px-4 py-8 flex flex-col justify-center items-center max-w-lg mx-auto border p-4 rounded-md"
             action={party.store()}
         >
             <div className="flex flex-col gap-4  w-full">
-                <h2 className="text-xl font-medium ">Create your Party</h2>
+                <h2 className="text-2xl font-medium text-center">Create your Party</h2>
                 <Field>
-                    <FieldLabel htmlFor="name">Name</FieldLabel>
-                    <Input placeholder="Enter name" name="name" autoFocus />
+                    <FieldLabel htmlFor="name">Party Name</FieldLabel>
+                    <Input placeholder="Hella's Birthday" name="name" autoFocus />
                     <FieldDescription>This will be shown as the party name for everyone</FieldDescription>
                     <FieldError>{props.errors.name}</FieldError>
                 </Field>

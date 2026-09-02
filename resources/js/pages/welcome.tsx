@@ -23,13 +23,8 @@ export default function Welcome() {
                 {/* Hero Section */}
                 <section className="relative overflow-hidden py-16 md:py-24 lg:py-32">
                     <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent pointer-events-none" />
-                    
-                    <div className="container mx-auto max-w-5xl px-4 text-center relative z-10">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
-                            <Sparkles className="size-3.5" />
-                            <span>The Ultimate Real-Time Karaoke Queue</span>
-                        </div>
 
+                    <div className="container mx-auto max-w-5xl px-4 text-center relative z-10">
                         <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
                             Host & Sing Together with <br className="hidden sm:inline" />
                             <span className="text-primary bg-clip-text">Live Karaoke Queues</span>
@@ -107,7 +102,7 @@ export default function Welcome() {
                 {/* Bottom Call To Action Banner */}
                 <section className="py-16 md:py-20 mt-auto">
                     <div className="container mx-auto max-w-4xl px-4 text-center">
-                        <Card className="p-8 md:p-12 border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card shadow-lg relative overflow-hidden">
+                        <Card className="p-8 md:p-12 border-primary/20 bg-linear-to-br from-primary/5 via-card to-card shadow-lg relative overflow-hidden">
                             <div className="relative z-10 flex flex-col items-center">
                                 <div className="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
                                     <Mic2 className="size-7" />

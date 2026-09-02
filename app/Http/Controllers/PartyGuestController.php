@@ -35,7 +35,7 @@ class PartyGuestController extends Controller
             'slug' => $party->slug,
             'guest' => $guest->only('name', 'session_token', 'joined_at', 'id'),
             'songs' => $guestSongs,
-            'party' => $party->only('name', 'slug'),
+            'party' => $party->only('name', 'slug', 'current_song_id'),
         ]);
     }
 

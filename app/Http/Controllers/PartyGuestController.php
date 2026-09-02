@@ -15,13 +15,13 @@ class PartyGuestController extends Controller
 {
     public function index(Request $request, string $slug)
     {
-        $party = Party::where('slug', $slug)->firstOrFail();
+        $party = Party::active()->where('slug', $slug)->firstOrFail();
 
         $sessionToken = $request->cookie('guest-token-'.$party->slug);
         if (! $sessionToken) {
             return Inertia::render('join/index', [
                 'fresh' => true,
-                'requiresPin' => !!$party->pin,
+                'requiresPin' => ! empty($party->pin),
                 'slug' => $party->slug,
             ]);
         }
@@ -41,7 +41,7 @@ class PartyGuestController extends Controller
 
     public function store(Request $request, string $slug)
     {
-        $party = Party::where('slug', $slug)->firstOrFail();
+        $party = Party::active()->where('slug', $slug)->firstOrFail();
 
         $request->validate([
             'name' => ['required', 'max:255'],
@@ -75,7 +75,7 @@ class PartyGuestController extends Controller
             'session_token' => $sessionToken,
         ]);
 
-        $cookie = Cookie::make('guest-token-'.$party->slug, $sessionToken, 61 * 24);
+        $cookie = Cookie::make('guest-token-'.$party->slug, $sessionToken, 24 * 60);
 
         return Redirect::back()->withCookie($cookie);
     }

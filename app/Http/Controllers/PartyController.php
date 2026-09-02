@@ -45,7 +45,7 @@ class PartyController extends Controller
 
     public function show(Request $request, string $slug): Response
     {
-        $party = Party::where('slug', $slug)->firstOrFail();
+        $party = Party::active()->where('slug', $slug)->firstOrFail();
 
         $cookieSecret = $request->cookie('party-secret-'.$slug);
 
@@ -82,7 +82,7 @@ class PartyController extends Controller
         $request->validate([
             'song_id' => ['required', 'integer', 'min:1', 'exists:songs,id'],
         ]);
-        $party = Party::where('slug', $slug)->firstOrFail();
+        $party = Party::active()->where('slug', $slug)->firstOrFail();
 
         $party->update([
             'current_song_id' => $request->input('song_id'),

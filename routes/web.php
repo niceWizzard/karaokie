@@ -20,11 +20,11 @@ Route::get('/', function (Request $request) {
     }
 
     $hostedParties = ! empty($hostedSlugs)
-        ? Party::whereIn('slug', $hostedSlugs)->latest()->get(['id', 'name', 'slug', 'created_at'])
+        ? Party::active()->whereIn('slug', $hostedSlugs)->latest()->get(['id', 'name', 'slug', 'created_at'])
         : [];
 
     $joinedParties = ! empty($joinedSlugs)
-        ? Party::whereIn('slug', $joinedSlugs)->latest()->get(['id', 'name', 'slug', 'created_at'])
+        ? Party::active()->whereIn('slug', $joinedSlugs)->latest()->get(['id', 'name', 'slug', 'created_at'])
         : [];
 
     return Inertia::render('welcome', [
@@ -32,6 +32,5 @@ Route::get('/', function (Request $request) {
         'joinedParties' => $joinedParties,
     ]);
 })->name('home');
-
 
 require __DIR__.'/party.php';

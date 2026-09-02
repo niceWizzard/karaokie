@@ -19,5 +19,8 @@ class Party extends Model
         'current_song_id',
     ];
 
-
+    public function scopeActive($query)
+    {
+        return $query->where('created_at', '>=', now()->subHours(24));
+    }
 }

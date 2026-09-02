@@ -69,7 +69,7 @@ export default function Welcome({ hostedParties = [], joinedParties = [] }: Welc
                                             <span>Parties You Are Hosting ({hostedParties.length})</span>
                                         </div>
 
-                                        <div className="flex flex-col gap-2.5">
+                                        <div className="flex flex-col gap-2.5 max-h-64 overflow-y-auto pr-1">
                                             {hostedParties.map((p) => (
                                                 <Card key={`hosted-${p.id}`} className="p-4 border-border/80 bg-card hover:border-primary/40 transition-all flex items-center justify-between shadow-2xs">
                                                     <div>
@@ -78,7 +78,7 @@ export default function Welcome({ hostedParties = [], joinedParties = [] }: Welc
                                                         </h3>
                                                         <span className="text-xs text-muted-foreground">Host Access • Code: {p.slug}</span>
                                                     </div>
-                                                    <Button asChild size="sm" className="gap-1.5">
+                                                    <Button asChild size="sm" className="gap-1.5 shrink-0">
                                                         <Link href={`/party/${p.slug}`}>
                                                             <span>Manage Party</span>
                                                             <ArrowRight className="size-3.5" />
@@ -98,7 +98,7 @@ export default function Welcome({ hostedParties = [], joinedParties = [] }: Welc
                                             <span>Parties You Joined ({joinedParties.length})</span>
                                         </div>
 
-                                        <div className="flex flex-col gap-2.5">
+                                        <div className="flex flex-col gap-2.5 max-h-64 overflow-y-auto pr-1">
                                             {joinedParties.map((p) => (
                                                 <Card key={`joined-${p.id}`} className="p-4 border-border/80 bg-card hover:border-primary/40 transition-all flex items-center justify-between shadow-2xs">
                                                     <div>
@@ -107,8 +107,8 @@ export default function Welcome({ hostedParties = [], joinedParties = [] }: Welc
                                                         </h3>
                                                         <span className="text-xs text-muted-foreground">Guest Access • Code: {p.slug}</span>
                                                     </div>
-                                                    <Button asChild variant="outline" size="sm" className="gap-1.5">
-                                                        <Link href={join.index.url({ slug: p.slug })}>
+                                                    <Button asChild variant="outline" size="sm" className="gap-1.5 shrink-0">
+                                                        <Link href={join.index.url({ slug: p.slug })} target="_blank">
                                                             <span>Open Queue</span>
                                                             <ExternalLink className="size-3.5" />
                                                         </Link>

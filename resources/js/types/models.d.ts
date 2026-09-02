@@ -12,6 +12,7 @@ interface Party {
     name: string;
     slug: string;
     current_song_id: number | null;
+    pin: string;
 }
 
 interface Guest {

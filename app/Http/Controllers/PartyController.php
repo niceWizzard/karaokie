@@ -7,7 +7,6 @@ use App\Models\Song;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -69,8 +68,9 @@ class PartyController extends Controller
                 'id' => $party->id,
                 'name' => $party->name,
                 'slug' => $party->slug,
+                'pin' => $party->pin,
                 'current_song_id' => $party->current_song_id,
-                'requiresPin' => false,
+                'requiresPin' => ! empty($party->pin),
             ],
             'songs' => $songs,
             'isAuthorized' => true,
@@ -91,5 +91,4 @@ class PartyController extends Controller
         return Redirect::back();
 
     }
-
 }

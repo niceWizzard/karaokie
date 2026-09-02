@@ -9,6 +9,7 @@ interface Song
 }
 
 interface Party {
+    id: number;
     name: string;
     slug: string;
     current_song_id: number | null;

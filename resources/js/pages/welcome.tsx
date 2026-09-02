@@ -3,18 +3,27 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import party from "@/routes/party";
+import join from "@/routes/join";
 import {
     ArrowRight,
+    Crown,
+    ExternalLink,
     ListMusic,
     Mic2,
     Music,
     PlusCircle,
     Radio,
-    Sparkles,
     Users,
 } from "lucide-react";
 
-export default function Welcome() {
+interface WelcomeProps {
+    hostedParties?: Party[];
+    joinedParties?: Party[];
+}
+
+export default function Welcome({ hostedParties = [], joinedParties = [] }: WelcomeProps) {
+    const hasParties = hostedParties.length > 0 || joinedParties.length > 0;
+
     return (
         <>
             <Head title="Karaokie - Host Live Karaoke Parties" />
@@ -46,6 +55,73 @@ export default function Welcome() {
                         </div>
                     </div>
                 </section>
+
+                {/* Cookie-Detected Active Parties Section */}
+                {hasParties && (
+                    <section className="py-10 bg-primary/5 border-y border-primary/20">
+                        <div className="container mx-auto max-w-5xl px-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Hosted Parties */}
+                                {hostedParties.length > 0 && (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                            <Crown className="size-4 text-amber-500" />
+                                            <span>Parties You Are Hosting ({hostedParties.length})</span>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2.5">
+                                            {hostedParties.map((p) => (
+                                                <Card key={`hosted-${p.id}`} className="p-4 border-border/80 bg-card hover:border-primary/40 transition-all flex items-center justify-between shadow-2xs">
+                                                    <div>
+                                                        <h3 className="font-semibold text-base" title={p.name}>
+                                                            {p.name}
+                                                        </h3>
+                                                        <span className="text-xs text-muted-foreground">Host Access • Code: {p.slug}</span>
+                                                    </div>
+                                                    <Button asChild size="sm" className="gap-1.5">
+                                                        <Link href={`/party/${p.slug}`}>
+                                                            <span>Manage Party</span>
+                                                            <ArrowRight className="size-3.5" />
+                                                        </Link>
+                                                    </Button>
+                                                </Card>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Joined Parties */}
+                                {joinedParties.length > 0 && (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                            <Users className="size-4 text-primary" />
+                                            <span>Parties You Joined ({joinedParties.length})</span>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2.5">
+                                            {joinedParties.map((p) => (
+                                                <Card key={`joined-${p.id}`} className="p-4 border-border/80 bg-card hover:border-primary/40 transition-all flex items-center justify-between shadow-2xs">
+                                                    <div>
+                                                        <h3 className="font-semibold text-base" title={p.name}>
+                                                            {p.name}
+                                                        </h3>
+                                                        <span className="text-xs text-muted-foreground">Guest Access • Code: {p.slug}</span>
+                                                    </div>
+                                                    <Button asChild variant="outline" size="sm" className="gap-1.5">
+                                                        <Link href={join.index.url({ slug: p.slug })}>
+                                                            <span>Open Queue</span>
+                                                            <ExternalLink className="size-3.5" />
+                                                        </Link>
+                                                    </Button>
+                                                </Card>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                )}
 
                 {/* Simple 3-Feature Section */}
                 <section className="py-12 bg-muted/30 border-y border-border/40">
@@ -127,4 +203,5 @@ export default function Welcome() {
         </>
     );
 }
+
 

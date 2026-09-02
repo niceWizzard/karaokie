@@ -24,7 +24,7 @@ class PartyController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:3'],
-            'pin' => ['nullable', 'string', 'size:4'],
+            'pin' => ['nullable', 'string',  'digits:4'],
         ]);
 
         $slug = Str::random(8);

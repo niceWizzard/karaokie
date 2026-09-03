@@ -1,0 +1,10 @@
+services:
+    laravel:
+        build: .
+        ports:
+            - "80:80"
+        volumes:
+            - sqlite_data:/var/www/html/database
+
+volumes:
+    sqlite_data:

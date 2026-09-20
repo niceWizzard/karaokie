@@ -25,14 +25,21 @@ WORKDIR /var/www/html
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN composer install
+# Set Production Environment
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+
+RUN composer install --no-dev --optimize-autoloader
 
 RUN npm ci && npm run build
-
-RUN php artisan migrate
 
 # Ensure the database file exists and the database folder is writable
 RUN touch /var/www/html/database/database.sqlite \
     && chown -R www-data:www-data /var/www/html/database \
     && chmod -R 775 /var/www/html/database \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+
+RUN chmod +x /var/www/html/entry-point.sh
+ENTRYPOINT ["/var/www/html/entry-point.sh"]
+CMD ["apache2-foreground"]
